@@ -90,7 +90,8 @@ class Hub(object):
         per_page = 60
         api = url + f"?page={page}&per_page=" + str(per_page)
         # TODO: src_token support
-        response = self.session.get(api)
+        print("Start get repo from source")
+        response = self.session.get(api, timeout=15)
         all_items = []
         if response.status_code != 200:
             print("Repo getting failed: " + response.text)

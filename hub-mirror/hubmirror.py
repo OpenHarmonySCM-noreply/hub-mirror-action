@@ -65,10 +65,12 @@ class HubMirror(object):
 
         total, success, skip = len(src_repos), 0, 0
         failed_list = []
+        just_num = 0
         for src_repo in src_repos:
+            just_num += 1
             # Set dst_repo to src_repo mapping or src_repo directly
             dst_repo = self.mappings.get(src_repo, src_repo)
-            print("Map %s to %s" % (src_repo, dst_repo))
+            print(str(just_num) + "/" + str(total) + ",Map %s to %s" % (src_repo, dst_repo))
             if self.test_black_white_list(src_repo):
                 print("Backup %s" % src_repo)
                 try:

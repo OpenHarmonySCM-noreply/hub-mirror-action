@@ -9,6 +9,8 @@ fi
 mkdir -p /root/.ssh
 echo "${INPUT_DST_KEY}" > /root/.ssh/id_rsa
 chmod 600 /root/.ssh/id_rsa
+bash /hub-mirror-shell/sync_to_github.sh  "${INPUT_DST_TOKEN}"
+exit
 
 pip3 install -r /hub-mirror/requirements.txt
 

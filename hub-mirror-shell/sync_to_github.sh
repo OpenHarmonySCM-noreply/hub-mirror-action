@@ -32,7 +32,7 @@ fi
 function check_github_repo(){
   check_github_repo_repo_name=$1
   check_github_repo_repo_description=$2
-  create_github_project_body=""{\"name\":\"${check_github_repo_repo_name}\",\"description\":\"${check_github_repo_repo_description}\",\"private\": false}""
+  create_github_project_body="{\"name\":\"${check_github_repo_repo_name}\",\"description\":\"${check_github_repo_repo_description}\",\"private\": false}"
   # 确认仓库是否存在
   git ls-remote git@github.com:${gitee_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
   if [ $? -gt 0 ];then

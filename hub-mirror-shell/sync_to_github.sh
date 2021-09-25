@@ -9,7 +9,7 @@ author_header="Authorization:token ${github_token}"
 if [ -f ${WORKSPACE}/api_result.txt ];then
     rm -rf ${WORKSPACE}/api_result.txt
 fi
-curl -I --dump-header ${WORKSPACE}/API.info -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100"
+curl -I --dump-header ${WORKSPACE}/API.info -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100" >/dev/null 2>&1
 sleep 1
 if [ ! -f ${WORKSPACE}/API.info ];then
     echo "API获取信息失败,请检查API调用"
@@ -53,7 +53,7 @@ paste -d, ${WORKSPACE}/jq.name ${WORKSPACE}/jq.default_branch ${WORKSPACE}/jq.de
 
 # 同步代码到GitHub
 
-bare_git_dir=/data01/project-objects
+bare_git_dir=${WORKSPACE}/project-objects
 all_num=`cat ${WORKSPACE}/${gitee_groups}_${unix_time}.csv|wc -l`
 just_num=0
 if [ -f ${WORKSPACE}/github_api.log ];then

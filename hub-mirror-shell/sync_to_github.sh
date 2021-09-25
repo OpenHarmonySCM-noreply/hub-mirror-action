@@ -14,7 +14,7 @@ author_header="Authorization:token ${github_token}"
 if [ -f ${WORKSPACE}/api_result.txt ];then
     rm -rf ${WORKSPACE}/api_result.txt
 fi
-curl -I --dump-header ${WORKSPACE}/API.info -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100" >/dev/null 2>&1
+curl --connect-timeout 15 -m 600 -I --dump-header ${WORKSPACE}/API.info -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100" >/dev/null 2>&1
 sleep 1
 if [ ! -f ${WORKSPACE}/API.info ];then
     echo "API获取信息失败,请检查API调用"
@@ -25,11 +25,11 @@ else
 fi
 
 if [ "X${total_page}" == "X" ];then
-    curl -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100">>${WORKSPACE}/api_result.txt
+    curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=1&per_page=100">>${WORKSPACE}/api_result.txt
 else
     for(( i = 1; i <= ${total_page}; i = i + 1 ))
     do
-        curl -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
+        curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
 
     done
 fi
@@ -42,7 +42,7 @@ function check_github_repo(){
   git ls-remote git@github.com:${gitee_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
   if [ $? -gt 0 ];then
      echo  "https://github.com/${gitee_groups}/${check_github_repo_repo_name} not exist,will create it!"
-     curl -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST https://api.github.com/orgs/${gitee_groups}/repos >>${WORKSPACE}/github_api.log
+     curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST https://api.github.com/orgs/${gitee_groups}/repos >>${WORKSPACE}/github_api.log
   else
      echo "https://github.com/${gitee_groups}/${check_github_repo_repo_name} exist,continue!"
   fi
@@ -116,9 +116,9 @@ do
         timeout 300 git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git
         if [ $? -eq 0 ];then i=999;fi
     done
-    
+
     # 处理github仓库描述与默认分支
     github_des_body="{\"description\":\"${description}\",\"default_branch\":\"${default_branch}\"}"
-    curl -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log
+    curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log
 
 done<${WORKSPACE}/${gitee_groups}_${unix_time}.csv

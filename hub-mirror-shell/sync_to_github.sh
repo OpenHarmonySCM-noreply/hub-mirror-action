@@ -1,7 +1,8 @@
 #!/bin/bash
 github_token=$1
 debug_type=$2
-gitee_groups=$3
+gitee_groups=`echo $3|sed 's#gitee/##g'`
+github_groups=`echo $4|sed 's#github/##g'`
 if [ "X${debug_type}" != "X" ];then
   set -x
 fi
@@ -40,12 +41,12 @@ function check_github_repo(){
   check_github_repo_repo_description=$2
   create_github_project_body="{\"name\":\"${check_github_repo_repo_name}\",\"description\":\"${check_github_repo_repo_description}\",\"private\": false}"
   # 确认仓库是否存在
-  git ls-remote git@github.com:${gitee_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
+  git ls-remote git@github.com:${github_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
   if [ $? -gt 0 ];then
-     echo  "https://github.com/${gitee_groups}/${check_github_repo_repo_name} not exist,will create it!"
-     curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST https://api.github.com/orgs/${gitee_groups}/repos >>${WORKSPACE}/github_api.log
+     echo  "https://github.com/${github_groups}/${check_github_repo_repo_name} not exist,will create it!"
+     curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST https://api.github.com/orgs/${github_groups}/repos >>${WORKSPACE}/github_api.log
   else
-     echo "https://github.com/${gitee_groups}/${check_github_repo_repo_name} exist,continue!"
+     echo "https://github.com/${github_groups}/${check_github_repo_repo_name} exist,continue!"
   fi
   # Todo
 }
@@ -102,24 +103,24 @@ do
     for((i=1;i<=3;i++));
     do
         echo "Push refs/heads/* to Github:(${i}/3)"
-        timeout 300 git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout 300 git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=3;i++));
     do
         echo "Push refs/tags/* to Github:(${i}/3)"
-        timeout 300 git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout 300 git push -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=3;i++));
     do
         echo "Push LFS to Github :(${i}/3)"
-        timeout 300 git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git
+        timeout 300 git lfs push --all git@github.com:${github_groups}/${repo_name}.git
         if [ $? -eq 0 ];then i=999;fi
     done
 
     # 处理github仓库描述与默认分支
     github_des_body="{\"description\":\"${description}\",\"default_branch\":\"${default_branch}\"}"
-    curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log
+    curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${github_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log
 
 done<${WORKSPACE}/${gitee_groups}_${unix_time}.csv

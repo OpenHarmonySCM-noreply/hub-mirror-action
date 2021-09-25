@@ -1,6 +1,7 @@
 #!/bin/bash
 github_token=$1
 debug_type=$2
+gitee_groups=$3
 if [ "X${debug_type}" != "X" ];then
   set -x
 fi
@@ -8,7 +9,7 @@ fi
 # 清理结果文件
 WORKSPACE=/hub-mirror-shell
 HEADER='Content-Type: application/json;charset=UTF-8'
-gitee_groups=openharmony
+
 
 author_header="Authorization:token ${github_token}"
 if [ -f ${WORKSPACE}/api_result.txt ];then

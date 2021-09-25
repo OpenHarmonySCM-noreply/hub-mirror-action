@@ -44,7 +44,7 @@ function check_github_repo(){
   git ls-remote git@github.com:${github_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
   if [ $? -gt 0 ];then
      echo  "https://github.com/${github_groups}/${check_github_repo_repo_name} not exist,will create it!"
-     curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST -d "${create_github_project_body} "https://api.github.com/orgs/${github_groups}/repos >>${WORKSPACE}/github_api.log
+     curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST -d "${create_github_project_body} "https://api.github.com/orgs/${github_groups}/repos" >>${WORKSPACE}/github_api.log
   else
      echo "https://github.com/${github_groups}/${check_github_repo_repo_name} exist,continue!"
   fi

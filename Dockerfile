@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN apt update && apt install git python3 python3-pip jq curl -y && \
+RUN apt update && apt install git python3 python3-pip jq curl git git-lfs -y && \
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 ADD *.sh /

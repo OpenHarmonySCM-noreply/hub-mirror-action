@@ -5,6 +5,7 @@ WORKSPACE=/hub-mirror-shell
 HEADER='Content-Type: application/json;charset=UTF-8'
 gitee_groups=openharmony
 github_token=$1
+author_header="Authorization:token ${github_token}"
 if [ -f ${WORKSPACE}/api_result.txt ];then
     rm -rf ${WORKSPACE}/api_result.txt
 fi
@@ -30,6 +31,16 @@ fi
 # Github 仓库是否存在,如果不存在创建出来
 function check_github_repo(){
   check_github_repo_repo_name=$1
+  check_github_repo_repo_description=$2
+  create_github_project_body=""{\"name\":\"${check_github_repo_repo_name}\",\"description\":\"${check_github_repo_repo_description}\",\"private\": false}""
+  # 确认仓库是否存在
+  git ls-remote git@github.com:${gitee_groups}/${check_github_repo_repo_name} >/dev/null 2>&1
+  if [ $? -gt 0 ];then
+     echo  "https://github.com/${gitee_groups}/${check_github_repo_repo_name} not exist,will create it!"
+     curl -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST https://api.github.com/orgs/${gitee_groups}/repos >>${WORKSPACE}/github_api.log
+  else
+     echo "https://github.com/${gitee_groups}/${check_github_repo_repo_name} exist,continue!"
+  fi
   # Todo
 }
 
@@ -57,19 +68,21 @@ do
     if [ "X${description}" == "Xnull" ];then
         description=
     fi
-    
+    # 判断Github仓库是否存在,如果不存在创建
+    check_github_repo "${repo_name}" "${description}"
     echo "${just_num}/${all_num},deal ${repo_name}"
     echo "${just_num}/${all_num},deal ${repo_name}" >>${WORKSPACE}/github_api.log
-    # 不管是否存在,均init
+    # 不管本地目录是否存在,均init
     git init --bare ${bare_git_dir}/${repo_name}.git
     cd ${bare_git_dir}/${repo_name}.git
     git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
     git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
     git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
-    echo "git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*"
-    echo "git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*"
-    echo "git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git"
+    git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+    git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+    git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git
     # 处理github仓库描述与默认分支
-    github_body="{\"description\":\"${description}\",\"default_branch\":\"${default_branch}\"}"
-    echo "curl -s -k -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name}?access_token=${github_token} -d \"${github_body}\" >>${WORKSPACE}/github_api.log"
+    github_des_body="{\"description\":\"${description}\",\"default_branch\":\"${default_branch}\"}"
+    curl -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log
+
 done<${WORKSPACE}/${gitee_groups}_${unix_time}.csv

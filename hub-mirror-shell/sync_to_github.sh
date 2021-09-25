@@ -1,10 +1,15 @@
 #!/bin/bash
+github_token=$1
+debug_type=$2
+if [ "X${debug_type}" != "X" ];then
+  set -x
+fi
 # 获取组织下面所有公开仓库
 # 清理结果文件
 WORKSPACE=/hub-mirror-shell
 HEADER='Content-Type: application/json;charset=UTF-8'
 gitee_groups=openharmony
-github_token=$1
+
 author_header="Authorization:token ${github_token}"
 if [ -f ${WORKSPACE}/api_result.txt ];then
     rm -rf ${WORKSPACE}/api_result.txt
@@ -75,12 +80,43 @@ do
     # 不管本地目录是否存在,均init
     git init --bare ${bare_git_dir}/${repo_name}.git
     cd ${bare_git_dir}/${repo_name}.git
-    git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
-    git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
-    git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
-    git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
-    git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
-    git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git
+    for((i=1;i<=3;i++));
+    do
+        echo "Fetching refs/heads/* from gitee:(${i}/3)"
+        timeout 600 git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    for((i=1;i<=3;i++));
+    do
+        echo "Fetching refs/tags/* from gitee:(${i}/3)"
+        timeout 600 git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    for((i=1;i<=3;i++));
+    do
+        echo "Fetching LFS from gitee:(${i}/3)"
+        timeout 600 git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    for((i=1;i<=3;i++));
+    do
+        echo "Push refs/heads/* to Github:(${i}/3)"
+        timeout 300 git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    for((i=1;i<=3;i++));
+    do
+        echo "Push refs/tags/* to Github:(${i}/3)"
+        timeout 300 git push -f git@github.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    for((i=1;i<=3;i++));
+    do
+        echo "Push LFS to Github :(${i}/3)"
+        timeout 300 git lfs push --all git@github.com:${gitee_groups}/${repo_name}.git
+        if [ $? -eq 0 ];then i=999;fi
+    done
+    
     # 处理github仓库描述与默认分支
     github_des_body="{\"description\":\"${description}\",\"default_branch\":\"${default_branch}\"}"
     curl -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X PATCH https://api.github.com/repos/${gitee_groups}/${repo_name} -d "${github_des_body}" >>${WORKSPACE}/github_api.log

@@ -69,9 +69,9 @@ if [ -f ${WORKSPACE}/github_api.log ];then
    echo ' '>${WORKSPACE}/github_api.log
 fi
 # 为了debug cache,写死只同步3个仓库
-echo '''community,master,OpenHarmony community governance| developer contribution guide| contribution agreement| and community communication | 包含OpenHarmony社区治理、开发者贡献指南、开发者贡献协议、社区交流等内容
-docs,master,OpenHarmony documentation | OpenHarmony开发者文档
-hiviewdfx_hilog_lite,master,MCU log module in the DFX subsystem | DFX-MCU日志模块'''>${WORKSPACE}/${gitee_groups}_${unix_time}.csv
+#echo '''community,master,OpenHarmony community governance| developer contribution guide| contribution agreement| and community communication | 包含OpenHarmony社区治理、开发者贡献指南、开发者贡献协议、社区交流等内容
+#docs,master,OpenHarmony documentation | OpenHarmony开发者文档
+#hiviewdfx_hilog_lite,master,MCU log module in the DFX subsystem | DFX-MCU日志模块'''>${WORKSPACE}/${gitee_groups}_${unix_time}.csv
 
 while read ONE_REPO
 do

@@ -14,6 +14,7 @@ HEADER='Content-Type: application/json;charset=UTF-8'
 
 
 author_header="Authorization:token ${github_token}"
+if [ ! -d ${WORKSPACE} ];then mkdir -p ${WORKSPACE};fi
 if [ -f ${WORKSPACE}/api_result.txt ];then
     rm -rf ${WORKSPACE}/api_result.txt
 fi

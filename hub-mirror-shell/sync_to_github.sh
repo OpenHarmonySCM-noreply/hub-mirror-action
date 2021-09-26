@@ -11,7 +11,7 @@ fi
 # 清理结果文件
 
 HEADER='Content-Type: application/json;charset=UTF-8'
-
+unix_time=`date '+%s'`
 
 author_header="Authorization:token ${github_token}"
 if [ ! -d ${WORKSPACE} ];then mkdir -p ${WORKSPACE};fi
@@ -73,7 +73,6 @@ fi
 echo '''community,master,OpenHarmony community governance| developer contribution guide| contribution agreement| and community communication | 包含OpenHarmony社区治理、开发者贡献指南、开发者贡献协议、社区交流等内容
 docs,master,OpenHarmony documentation | OpenHarmony开发者文档
 hiviewdfx_hilog_lite,master,MCU log module in the DFX subsystem | DFX-MCU日志模块'''>${WORKSPACE}/${gitee_groups}_${unix_time}.csv
-exit
 
 while read ONE_REPO
 do

@@ -3,12 +3,13 @@ github_token=$1
 debug_type=$2
 gitee_groups=`echo $3|sed 's#gitee/##g'`
 github_groups=`echo $4|sed 's#github/##g'`
+WORKSPACE=$5
 if [ "X${debug_type}" != "X" ];then
   set -x
 fi
 # 获取组织下面所有公开仓库
 # 清理结果文件
-WORKSPACE=/hub-mirror-shell
+
 HEADER='Content-Type: application/json;charset=UTF-8'
 
 

@@ -75,6 +75,8 @@ fi
 #docs,master,OpenHarmony documentation | OpenHarmony开发者文档
 #hiviewdfx_hilog_lite,master,MCU log module in the DFX subsystem | DFX-MCU日志模块'''>${WORKSPACE}/${gitee_groups}_${unix_time}.csv
 
+
+
 while read ONE_REPO
 do
     just_num=$((just_num+1))
@@ -97,6 +99,25 @@ do
     git init --bare ${bare_git_dir}/${repo_name}.git
     cd ${bare_git_dir}/${repo_name}.git
     max_retry=10
+    # 超大仓库特殊处理, 当前仅处理kernel_linux kernel_Linux_4.19 kernei_linux_5.10三个仓库
+    # 为防止部分匹配,关键字后加英文逗号
+    big_project_lists='''kernel_linux_4.19,torvalds/linux,refs/tags/v4.19
+    kernel_linux_5.10,torvalds/linux,refs/tags/v5.10
+    kernel_linux,torvalds/linux,refs/tags/v4.19'''
+    big_project_info=`echo "${big_project_lists// /}"|grep -E "^${repo_name}"|head -n1`
+    if [ "X${big_project_info}" != "X" ];then
+        github_reponame=`echo ${big_project_info}|awk -F ',' '{print $2}'`
+        github_reporefs=`echo ${big_project_info}|awk -F ',' '{print $3}'`
+        echo "${repo_name} is big project, fetch from github first!"
+        
+        for((i=1;i<=${max_retry};i++));
+        do
+            timeout_num=$((300*$i))
+            echo "Fetching from git@${github_reponame},${github_reporefs}:(${i}/${max_retry})"
+            timeout ${timeout_num} git fetch -f git@github.com:${github_reponame}.git ${github_reporefs}:${github_reporefs}
+            if [ $? -eq 0 ];then i=999;fi
+        done
+    fi
     for((i=1;i<=${max_retry};i++));
     do
         timeout_num=$((120*$i))
@@ -126,6 +147,7 @@ do
         timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
         if [ $? -eq 0 ];then i=999;fi
     done
+
     for((i=1;i<=${max_retry};i++));
     do
         timeout_num=$((120*$i))

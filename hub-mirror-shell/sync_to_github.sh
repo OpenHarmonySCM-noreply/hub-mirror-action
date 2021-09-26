@@ -51,6 +51,17 @@ function check_github_repo(){
      curl  --connect-timeout 15 -m 600 -s -k  -H "${author_header}" -H 'Accept: application/vnd.github.v3+json' -X POST -d "${create_github_project_body}" "https://api.github.com/orgs/${github_groups}/repos" >>${WORKSPACE}/github_api.log
   else
      echo "https://github.com/${github_groups}/${check_github_repo_repo_name} exist,continue!"
+     # 如果github已存在, 从github fetch一次,用于加速同步
+     cd ${bare_git_dir}/${repo_name}.git
+     max_retry=10
+     for((i=1;i<=${max_retry};i++));
+     do
+        timeout_num=$((120*$i))
+        echo "Fetching refs/heads/* from github:(${i}/${max_retry})"
+        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        if [ $? -eq 0 ];then i=999;fi
+     done
   fi
   # Todo
 }

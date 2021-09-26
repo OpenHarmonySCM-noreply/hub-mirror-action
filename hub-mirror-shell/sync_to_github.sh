@@ -94,40 +94,47 @@ do
     fi
     git init --bare ${bare_git_dir}/${repo_name}.git
     cd ${bare_git_dir}/${repo_name}.git
-    for((i=1;i<=3;i++));
+    
+    for((i=1;i<=10;i++));
     do
+        timeout_num=$((120*$i))
         echo "Fetching refs/heads/* from gitee:(${i}/3)"
-        timeout 600 git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
         if [ $? -eq 0 ];then i=999;fi
     done
-    for((i=1;i<=3;i++));
+    for((i=1;i<=10;i++));
     do
+        timeout_num=$((120*$i))
         echo "Fetching refs/tags/* from gitee:(${i}/3)"
-        timeout 600 git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
         if [ $? -eq 0 ];then i=999;fi
     done
-    for((i=1;i<=3;i++));
+    for((i=1;i<=10;i++));
     do
+        timeout_num=$((120*$i))
         echo "Fetching LFS from gitee:(${i}/3)"
-        timeout 600 git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
+        timeout ${timeout_num} git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=3;i++));
     do
+        timeout_num=$((120*$i))
         echo "Push refs/heads/* to Github:(${i}/3)"
-        timeout 300 git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=3;i++));
     do
+        timeout_num=$((120*$i))
         echo "Push refs/tags/* to Github:(${i}/3)"
-        timeout 300 git push -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=3;i++));
     do
+        timeout_num=$((120*$i))
         echo "Push LFS to Github :(${i}/3)"
-        timeout 300 git lfs push --all git@github.com:${github_groups}/${repo_name}.git
+        timeout ${timeout_num} git lfs push --all git@github.com:${github_groups}/${repo_name}.git
         if [ $? -eq 0 ];then i=999;fi
     done
 

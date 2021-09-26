@@ -33,8 +33,7 @@ if [ "X${total_page}" == "X" ];then
 else
     for(( i = 1; i <= ${total_page}; i = i + 1 ))
     do
-        echo 'jum'
-        #curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
+        curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
 
     done
 fi
@@ -88,6 +87,11 @@ do
     echo "${just_num}/${all_num},deal ${repo_name}"
     echo "${just_num}/${all_num},deal ${repo_name}" >>${WORKSPACE}/github_api.log
     # 不管本地目录是否存在,均init
+    if [ ! -d ${bare_git_dir}/${repo_name}.git ];then
+        echo  "Git dir not exist, will init! ${bare_git_dir}/${repo_name}.git"
+    else
+        echo  "Git dir exist,${bare_git_dir}/${repo_name}.git"
+    fi
     git init --bare ${bare_git_dir}/${repo_name}.git
     cd ${bare_git_dir}/${repo_name}.git
     for((i=1;i<=3;i++));

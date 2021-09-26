@@ -31,7 +31,8 @@ if [ "X${total_page}" == "X" ];then
 else
     for(( i = 1; i <= ${total_page}; i = i + 1 ))
     do
-        curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
+        echo 'jum'
+        #curl  --connect-timeout 15 -m 600 -s -k -X GET --header "${HEADER}" "https://gitee.com/api/v5/orgs/${gitee_groups}/repos?type=public&page=${i}&per_page=100" >>${WORKSPACE}/api_result.txt
 
     done
 fi
@@ -66,9 +67,10 @@ just_num=0
 if [ -f ${WORKSPACE}/github_api.log ];then
    echo ' '>${WORKSPACE}/github_api.log
 fi
-# 为了debug cache,写死只同步两个仓库
-ls -l ${WORKSPACE}/project-objects
-cat ${WORKSPACE}/${gitee_groups}_${unix_time}.csv
+# 为了debug cache,写死只同步3个仓库
+echo '''community,master,OpenHarmony community governance| developer contribution guide| contribution agreement| and community communication | 包含OpenHarmony社区治理、开发者贡献指南、开发者贡献协议、社区交流等内容
+docs,master,OpenHarmony documentation | OpenHarmony开发者文档
+hiviewdfx_hilog_lite,master,MCU log module in the DFX subsystem | DFX-MCU日志模块'''>${WORKSPACE}/${gitee_groups}_${unix_time}.csv
 exit
 
 while read ONE_REPO

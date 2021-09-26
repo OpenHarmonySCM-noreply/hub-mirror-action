@@ -68,6 +68,7 @@ if [ -f ${WORKSPACE}/github_api.log ];then
 fi
 # 为了debug cache,写死只同步两个仓库
 ls -l ${WORKSPACE}/project-objects
+cat ${WORKSPACE}/${gitee_groups}_${unix_time}.csv
 exit
 
 while read ONE_REPO

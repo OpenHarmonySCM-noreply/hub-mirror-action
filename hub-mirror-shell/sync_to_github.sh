@@ -67,7 +67,9 @@ if [ -f ${WORKSPACE}/github_api.log ];then
    echo ' '>${WORKSPACE}/github_api.log
 fi
 # 为了debug cache,写死只同步两个仓库
-cat ${WORKSPACE}/${gitee_groups}_${unix_time}.csv|head -n2 >${WORKSPACE}/${gitee_groups}_${unix_time}.csv
+ls -l ${WORKSPACE}/project-objects
+exit
+
 while read ONE_REPO
 do
     just_num=$((just_num+1))

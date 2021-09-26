@@ -1,7 +1,6 @@
 #!/bin/bash
 
 DEBUG="${INPUT_DEBUG}"
-DEBUG=true
 if [[ "$DEBUG" == "true" ]]; then
   set -x
 fi

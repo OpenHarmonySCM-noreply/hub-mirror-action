@@ -58,8 +58,8 @@ function check_github_repo(){
      do
         timeout_num=$((120*$i))
         echo "Fetching refs/heads/* from github:(${i}/${max_retry})"
-        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
-        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*  >dev/null
+        timeout ${timeout_num} git fetch -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*  >dev/null
         if [ $? -eq 0 ];then i=999;fi
      done
   fi
@@ -124,8 +124,8 @@ do
         for((i=1;i<=${max_retry};i++));
         do
             timeout_num=$((300*$i))
-            echo "Fetching from git@${github_reponame},${github_reporefs}:(${i}/${max_retry})"
-            timeout ${timeout_num} git fetch -f git@github.com:${github_reponame}.git ${github_reporefs}:${github_reporefs}
+            echo "Fetching from git@github.com:${github_reponame},${github_reporefs}:(${i}/${max_retry})"
+            timeout ${timeout_num} git fetch -f git@github.com:${github_reponame}.git ${github_reporefs}:${github_reporefs}  >dev/null
             if [ $? -eq 0 ];then i=999;fi
         done
     fi
@@ -133,21 +133,21 @@ do
     do
         timeout_num=$((120*$i))
         echo "Fetching refs/heads/* from gitee:(${i}/${max_retry})"
-        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/heads/*:refs/heads/*  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=${max_retry};i++));
     do
         timeout_num=$((120*$i))
         echo "Fetching refs/tags/* from gitee:(${i}/${max_retry})"
-        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout ${timeout_num} git fetch -f git@gitee.com:${gitee_groups}/${repo_name}.git refs/tags/*:refs/tags/*  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=${max_retry};i++));
     do
         timeout_num=$((120*$i))
         echo "Fetching LFS from gitee:(${i}/${max_retry})"
-        timeout ${timeout_num} git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git
+        timeout ${timeout_num} git lfs fetch --all git@gitee.com:${gitee_groups}/${repo_name}.git  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
     max_retry=3
@@ -155,7 +155,7 @@ do
     do
         timeout_num=$((120*$i))
         echo "Push refs/heads/* to Github:(${i}/${max_retry})"
-        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*
+        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/heads/*:refs/heads/*  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
 
@@ -163,14 +163,14 @@ do
     do
         timeout_num=$((120*$i))
         echo "Push refs/tags/* to Github:(${i}/${max_retry})"
-        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*
+        timeout ${timeout_num} git push -f git@github.com:${github_groups}/${repo_name}.git refs/tags/*:refs/tags/*  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
     for((i=1;i<=${max_retry};i++));
     do
         timeout_num=$((120*$i))
         echo "Push LFS to Github :(${i}/${max_retry})"
-        timeout ${timeout_num} git lfs push --all git@github.com:${github_groups}/${repo_name}.git
+        timeout ${timeout_num} git lfs push --all git@github.com:${github_groups}/${repo_name}.git  >dev/null
         if [ $? -eq 0 ];then i=999;fi
     done
 

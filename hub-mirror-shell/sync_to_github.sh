@@ -97,10 +97,6 @@ do
     if [ "X${description}" == "Xnull" ];then
         description=
     fi
-    # 判断Github仓库是否存在,如果不存在创建
-    check_github_repo "${repo_name}" "${description}"
-    echo "${just_num}/${all_num},deal ${repo_name}"
-    echo "${just_num}/${all_num},deal ${repo_name}" >>${WORKSPACE}/github_api.log
     # 不管本地目录是否存在,均init
     if [ ! -d ${bare_git_dir}/${repo_name}.git ];then
         echo  "Git dir not exist, will init! ${bare_git_dir}/${repo_name}.git"
@@ -108,6 +104,11 @@ do
         echo  "Git dir exist,${bare_git_dir}/${repo_name}.git"
     fi
     git init --bare ${bare_git_dir}/${repo_name}.git
+    # 判断Github仓库是否存在,如果不存在创建,如果存在,将会先从github fetch一次
+    check_github_repo "${repo_name}" "${description}"
+    echo "${just_num}/${all_num},deal ${repo_name}"
+    echo "${just_num}/${all_num},deal ${repo_name}" >>${WORKSPACE}/github_api.log
+    
     cd ${bare_git_dir}/${repo_name}.git
     max_retry=10
     # 超大仓库特殊处理, 当前仅处理kernel_linux kernel_Linux_4.19 kernei_linux_5.10三个仓库

@@ -3,13 +3,14 @@ github_token=$1
 debug_type=`echo $2|tr 'a-z' 'A-Z'`
 gitee_groups=`echo $3|sed 's#gitee/##g'`
 github_groups=`echo $4|sed 's#github/##g'`
-set -x
+
 WORKSPACE=$5
 if [ "X${debug_type}" == "XTRUE" ];then
   set -x
 else
   set +x
 fi
+set -x
 # 获取组织下面所有公开仓库
 # 清理结果文件
 
